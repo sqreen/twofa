@@ -9,32 +9,94 @@ import Foundation
 
 // https://github.com/google/google-authenticator/wiki/Key-Uri-Format
 
-enum OtpType {
-    case totp(period: Int?)
-    case hotp(counter: Int)
+// Abstraction for specific input (keyboard, pasteboard...)
+public protocol OtpAuthSource {
+    func getSync(nameHint: String?) throws -> OtpAuth?
+    func getInLoopSync(nameHint: String?) throws -> OtpAuth
 }
 
-enum OtpDigits : String {
+public extension OtpAuthSource {
+    func getInLoopSync(nameHint: String?) throws -> OtpAuth {
+        var result: OtpAuth? = nil
+        repeat {
+            result = try self.getSync(nameHint: nameHint)
+        } while result == nil
+        
+        return result!
+    }
+}
+
+public class TerminalOtpAuthSource : OtpAuthSource {
+    public func getSync(nameHint: String?) throws -> OtpAuth? {
+        fatalError("Not implemented")
+    }
+}
+
+public enum OtpType: Codable {
+    private enum CodingKeys: String, CodingKey {
+        case base, totpParams, hotpParams
+    }
+    
+    private enum Base : String, Codable {
+        case totp
+        case hotp
+    }
+    
+    case totp(period: Int?)
+    case hotp(counter: Int)
+    
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        
+        switch self {
+        case .totp(let period):
+            try container.encode(Base.totp, forKey: .base)
+            try container.encode(period, forKey: .totpParams)
+        case .hotp(let counter):
+            try container.encode(Base.hotp, forKey: .base)
+            try container.encode(counter, forKey: .hotpParams)
+        }
+    }
+    
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        let base = try container.decode(Base.self, forKey: .base)
+        
+        switch base {
+        case .totp:
+            let period = try container.decode(Optional<Int>.self, forKey: .totpParams)
+            self = .totp(period: period)
+        case .hotp:
+            let counter = try container.decode(Int.self, forKey: .hotpParams)
+            self = .hotp(counter: counter)
+        }
+    }
+}
+
+public enum OtpDigits : String, Codable {
     case six = "6"
     case eight = "8"
 }
 
-enum OtpAlgorithm : String, Equatable {
+public enum OtpAlgorithm : String, Equatable, Codable {
     case sha1
     case sha256
     case sha512
 }
 
-struct OtpAuth {
-    let type: OtpType
-    let label: String
+public struct OtpAuth : Codable, CustomStringConvertible {
+    public let type: OtpType
+    public let label: String
     let secret: [UInt8]
-    let issuer: String?
-    let digits: OtpDigits
-    let algorithm: OtpAlgorithm
+    public let issuer: String?
+    public let digits: OtpDigits
+    public let algorithm: OtpAlgorithm
     
+    public var description: String {
+        get {
+            return "[OtpAuth label:\(self.label)]"
+        }
+    }
 }
 
-protocol OtpAuthSource {
-    
-}
+

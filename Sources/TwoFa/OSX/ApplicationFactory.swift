@@ -11,7 +11,9 @@ import TwoFaCore
 public class ApplicationFactory {
     public func create() -> Application {
         let host = ApplicationHost()
-        return Application(appHost: host)
+        let pb = PasteboardWatcher()
+        let source = PasteboardOtpAuthSource(pb: pb)
+        return Application(appHost: host, keychain: MacKeychain(), source: source)
     }
 }
 #endif

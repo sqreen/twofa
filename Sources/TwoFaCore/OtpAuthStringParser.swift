@@ -10,9 +10,9 @@ import Base32
 
 // Spec: https://github.com/google/google-authenticator/wiki/Key-Uri-Format
 
-class OtpAuthStringParser {
+public class OtpAuthStringParser {
     
-    enum ParseError : Swift.Error {
+    public enum ParseError : Swift.Error {
         case notAnUrl(String)
         case missingScheme
         case invalidScheme(String)
@@ -29,7 +29,11 @@ class OtpAuthStringParser {
         case invalidAlgorithm(String)
     }
     
-    public func parse(_ str: String) throws -> OtpAuth {
+    public init() {
+        
+    }
+    
+    public func parse(_ str: String, nameHint: String? = nil) throws -> OtpAuth {
         
         guard let url = URL(string: str) else {
             throw ParseError.notAnUrl(str)
@@ -71,10 +75,17 @@ class OtpAuthStringParser {
             throw ParseError.unknownType(typeStr)
         }
         
-        let label = String(url.path[url.path.index(after: url.path.startIndex)...])
+        let labelCandidate = String(url.path[url.path.index(after: url.path.startIndex)...])
+        let label: String
         
-        if label.isEmpty {
-            throw ParseError.emptyLabel
+        if labelCandidate.isEmpty {
+            if let nameHint = nameHint {
+                label = nameHint
+            } else {
+                throw ParseError.emptyLabel
+            }
+        } else {
+            label = labelCandidate
         }
         
         let labelParts = label.split(separator: ":")
