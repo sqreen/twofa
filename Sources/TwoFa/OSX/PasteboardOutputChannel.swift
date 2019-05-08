@@ -16,7 +16,7 @@ public class PasteboardOutputChannel : OutputChannel {
         self.oldContents = NSPasteboard.general.string(forType: .string)
     }
     
-    public func send(_ code: String) {
+    public func send(_ code: String, remaining: TimeInterval) {
         self.set(code)
     }
     

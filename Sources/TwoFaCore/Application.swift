@@ -51,8 +51,9 @@ public class Application {
                     defer { for c in self.outputs { c.close()} }
                     
                     repeat {
+                        let remaining = TimeInterval(period) - Date().timeIntervalSince1970.truncatingRemainder(dividingBy: TimeInterval(period))
                         let code = try generator.successor().password(at: Date())
-                        for c in self.outputs { c.send(code) }
+                        for c in self.outputs { c.send(code, remaining: remaining) }
                         sleep(1)
                     } while !self.appHost.shouldQuit
                 } catch KeychainError.itemNotFound {

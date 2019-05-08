@@ -9,7 +9,7 @@ import Foundation
 
 public protocol OutputChannel {
     func open()
-    func send(_ code: String)
+    func send(_ code: String, remaining: TimeInterval)
     func close()
 }
 
@@ -27,8 +27,8 @@ public class StdoutOutputChannel : OutputChannel {
         print("")
     }
     
-    public func send(_ code: String) {
-        print("\rCode: \(code)", terminator: "")
+    public func send(_ code: String, remaining: TimeInterval) {
+        print("\rCode (\(Int(remaining))s): \(code)", terminator: "")
         fflush(__stdoutp)
     }
     
