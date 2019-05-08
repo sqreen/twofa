@@ -9,11 +9,13 @@ public class Application {
     let appHost: ApplicationHost
     let keychain: Keychain
     let source: OtpAuthSource
+    let outputs: [OutputChannel]
     
-    public init(appHost: ApplicationHost, keychain: Keychain, source: OtpAuthSource) {
+    public init(appHost: ApplicationHost, keychain: Keychain, source: OtpAuthSource, outputs: [OutputChannel]) {
         self.appHost = appHost
         self.keychain = keychain
         self.source = source
+        self.outputs = outputs
     }
     
     public func run() {
@@ -45,13 +47,14 @@ public class Application {
                             fatalError("Invalid generator parameters")
                     }
                     
-                    print("")
-                    defer { print("") }
+                    for c in self.outputs { c.open() }
+                    defer { for c in self.outputs { c.close()} }
+                    
                     repeat {
-                        print("\rCode: \(try generator.successor().password(at: Date()))", terminator: "")
-                        fflush(__stdoutp)
+                        let code = try generator.successor().password(at: Date())
+                        for c in self.outputs { c.send(code) }
                         sleep(1)
-                    } while true
+                    } while !self.appHost.shouldQuit
                 } catch KeychainError.itemNotFound {
                     print("Specified item (\(label)) not found")
                 } catch {
@@ -80,10 +83,6 @@ public class Application {
                     // demo2: --name Poloniex --secret 2FULJJMNMVVDYXLTV
                     let item = KeychainItem(from: otpAuth)
                     try self.keychain.add(item)
-                    
-                    // After adding, test it!
-//                    let x = try self.keychain.get(item.otp.label)
-//                    print("Successfully added: \(x)")
                 } catch OtpAuthStringParser.ParseError.notAnUrl(let u) {
                     print("Invalid URI: \(u)")
                 } catch OtpAuthStringParser.ParseError.invalidScheme(let s) {

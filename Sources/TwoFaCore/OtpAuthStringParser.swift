@@ -50,8 +50,6 @@ public class OtpAuthStringParser {
     
     public func parse(_ str: String, label labelOverride: String? = nil) throws -> OtpAuth {
         
-        print("Parsing: \(str)")
-        
         guard let url = URL(string: str) else {
             throw ParseError.notAnUrl(str)
         }

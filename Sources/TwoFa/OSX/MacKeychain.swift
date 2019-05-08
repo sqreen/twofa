@@ -97,10 +97,7 @@ class MacKeychain : CoreKeychain {
                     return
                 }
                 
-                print("Loaded: \(jsonStr)")
-                
                 if let data = jsonStr.data(using: .utf8) {
-                    print("Loaded: \(data)")
                     result = try JSONDecoder().decode(T.self, from: data)
                 }
             } catch KeychainAccess.Status.itemNotFound {

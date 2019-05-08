@@ -13,7 +13,7 @@ public class ApplicationFactory {
         let host = ApplicationHost()
         let pb = PasteboardWatcher()
         let source = PasteboardOtpAuthSource(pb: pb)
-        return Application(appHost: host, keychain: MacKeychain(), source: source)
+        return Application(appHost: host, keychain: MacKeychain(), source: source, outputs: [PasteboardOutputChannel(), StdoutOutputChannel()])
     }
 }
 #endif
