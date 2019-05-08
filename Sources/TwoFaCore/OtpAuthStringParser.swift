@@ -12,8 +12,9 @@ import Base32
 
 public class OtpAuthStringParser {
     
-    let defaultDigits = OtpDigits.six
-    let defaultAlgorithm = OtpAlgorithm.sha1
+    static let defaultDigits = OtpDigits.six
+    static let defaultAlgorithm = OtpAlgorithm.sha1
+    static let defaultTotpPeriod = 30
     
     public enum ParseError : Swift.Error {
         case notAnUrl(String)
@@ -36,14 +37,15 @@ public class OtpAuthStringParser {
         
     }
     
-    public func parse(label: String, secretStr: String, type: OtpType = .totp(period: nil)) throws -> OtpAuth {
+    public func parse(label: String, secretStr: String, type: OtpType? = nil) throws -> OtpAuth {
+        let actualType = type ?? .totp(period: OtpAuthStringParser.defaultTotpPeriod)
         return OtpAuth(
-            type: type,
+            type: actualType,
             label: label,
             secret: try self.decodeSecret(secretStr),
             issuer: nil,
-            digits: self.defaultDigits,
-            algorithm: self.defaultAlgorithm)
+            digits: OtpAuthStringParser.defaultDigits,
+            algorithm: OtpAuthStringParser.defaultAlgorithm)
     }
     
     public func parse(_ str: String, label labelOverride: String? = nil) throws -> OtpAuth {
@@ -76,7 +78,7 @@ public class OtpAuthStringParser {
                 }
                 type = .totp(period: period)
             } else {
-                type = .totp(period: nil)
+                type = .totp(period: OtpAuthStringParser.defaultTotpPeriod)
             }
         case "hotp":
             guard let counterStr = url.valueOf("counter") else {
@@ -128,12 +130,13 @@ public class OtpAuthStringParser {
         
         let digits : OtpDigits
         if let digitStr = url.valueOf("digits") {
-            guard let digitCandidate = OtpDigits(rawValue: digitStr) else {
+            guard let digitInt = Int(digitStr), let digitCandidate = OtpDigits(rawValue: digitInt) else {
                 throw ParseError.invalidDigits(digitStr)
             }
+            
             digits = digitCandidate
         } else {
-            digits = self.defaultDigits
+            digits = OtpAuthStringParser.defaultDigits
         }
         
         let algorithm: OtpAlgorithm
@@ -143,7 +146,7 @@ public class OtpAuthStringParser {
             }
             algorithm = parsedAlgorithm
         } else {
-            algorithm = self.defaultAlgorithm
+            algorithm = OtpAuthStringParser.defaultAlgorithm
         }
         
         return OtpAuth(

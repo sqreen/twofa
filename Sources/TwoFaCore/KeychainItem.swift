@@ -10,6 +10,8 @@ import Foundation
 public struct KeychainItem : Codable {
     let otpAuth: OtpAuth
     
+    public var otp: OtpAuth { return otpAuth }
+    
     public init(from otpAuth: OtpAuth) {
         self.otpAuth = otpAuth
     }

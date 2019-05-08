@@ -42,7 +42,7 @@ public enum OtpType: Codable {
         case hotp
     }
     
-    case totp(period: Int?)
+    case totp(period: Int)
     case hotp(counter: Int)
     
     public func encode(to encoder: Encoder) throws {
@@ -64,7 +64,7 @@ public enum OtpType: Codable {
         
         switch base {
         case .totp:
-            let period = try container.decode(Optional<Int>.self, forKey: .totpParams)
+            let period = try container.decode(Int.self, forKey: .totpParams)
             self = .totp(period: period)
         case .hotp:
             let counter = try container.decode(Int.self, forKey: .hotpParams)
@@ -73,9 +73,9 @@ public enum OtpType: Codable {
     }
 }
 
-public enum OtpDigits : String, Codable {
-    case six = "6"
-    case eight = "8"
+public enum OtpDigits : Int, Codable {
+    case six = 6
+    case eight = 8
 }
 
 public enum OtpAlgorithm : String, Equatable, Codable {

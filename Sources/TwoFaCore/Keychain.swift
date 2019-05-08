@@ -8,7 +8,12 @@
 import Foundation
 
 public protocol Keychain {
-    func enumerate() throws -> [KeychainItem] 
+    func enumerateLabels() throws -> [String]
     func add(_ item: KeychainItem) throws
-    func get(_ name: String) throws -> KeychainItem?
+    func get(_ name: String) throws -> KeychainItem
+}
+
+public enum KeychainError : Error {
+    case duplicateItem
+    case itemNotFound
 }
