@@ -17,15 +17,15 @@ public class PasteboardOtpAuthSource : OtpAuthSource {
         self.pb = pb
     }
     
-    public func getSync(nameHint: String?) throws -> OtpAuth? {
-        
+    // TODO: refactor so we don't print here
+    public func getSync(label: String?) throws -> OtpAuth? {
         defer { self.pb.delegate = nil }
         
         class PBWDelegate : PasteboardWatcherDelegate {
             let semaphore: DispatchSemaphore
             var result: OtpAuth?
             var error: Error?
-            var nameHint: String?
+            var label: String?
             
             func newlyCopiedCImageObtained(_ image: CIImage) {
                 defer {
@@ -33,21 +33,21 @@ public class PasteboardOtpAuthSource : OtpAuthSource {
                 }
                 
                 do {
-                    self.result = try image.parseQR(nameHint: nameHint)
+                    self.result = try image.parseQR(label: label)
                 } catch let error {
                     self.error = error
                 }
             }
             
-            init(_ semaphore: DispatchSemaphore, nameHint: String?) {
+            init(_ semaphore: DispatchSemaphore, label: String?) {
                 self.semaphore = semaphore
-                self.nameHint = nameHint
+                self.label = label
             }
         }
         
         
         let semaphore = DispatchSemaphore(value: 0)
-        let delegate = PBWDelegate(semaphore, nameHint: nameHint)
+        let delegate = PBWDelegate(semaphore, label: label)
         self.pb.delegate = delegate
         
         print("Please take a screenshot of a 2FA QR code...")

@@ -14,8 +14,9 @@ public class Application {
         self.keychain = keychain
         self.source = source
     }
-
+    
     public func run() {
+        
         let group = Group {
             $0.command("list") {
                 do {
@@ -29,15 +30,36 @@ public class Application {
             
             $0.command(
                 "add",
-                Argument<String>("name", description: "The name hint for the account (will only be used if name can not be auto-detected"),
-                Option<String?>("seed", default: nil, description: "Your name")
-            ) { (name: String, seed: String?) in
+                Option<String?>("label", default: .none),
+                Option<String?>("secret", default: .none),
+                Option<String?>("uri", default: .none)
+            ) { label, secretStr, uri in
                 
                 do {
-                    let otpAuth = try self.source.getInLoopSync(nameHint: name)
-                    print("Adding...")
+                    let otpAuth: OtpAuth
+                    if let uri = uri {
+                        otpAuth = try OtpAuth(uri: uri, label: label)
+                    } else if let secretStr = secretStr, let label = label {
+                        otpAuth = try OtpAuth(label: label, secretStr: secretStr)
+                    } else {
+                        otpAuth = try self.source.getInLoopSync(label: label)
+                    }
+                    //                    guard !self.keychain.get(otpAuth.label) else {
+                    //                        print("Item named \(otpAuth.label) already exists in the list. Pass in the --name parameter to override the name.")
+                    //                        return
+                    //                    }
+
+                    // demo1: otpauth://totp/avi-9605?secret=LZYSI2TSMRSWOYJSPEYSM5Q&issuer=SparkPost
+                    // demo2: --name Poloniex --secret 2FULJJMNMVVDYXLTV
+                    try self.keychain.add(KeychainItem(from: otpAuth))
+                } catch OtpAuthStringParser.ParseError.notAnUrl(let u) {
+                    print("Invalid URI: \(u)")
+                } catch OtpAuthStringParser.ParseError.invalidScheme(let s) {
+                    print("Invalid URI scheme. Expected 'otpauth' but received '\(s)'")
+                } catch OtpAuthStringParser.ParseError.invalidSecret(let s) {
+                    print("Invalid secret. Secret must be a valid Base32-encoded string. Received: '\(s)'")
                 } catch {
-                    print("Failed to add the item: \(error)")
+                    print("Unexpected error: \(error)")
                 }
             }
         }

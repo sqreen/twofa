@@ -10,7 +10,7 @@ import Foundation
 public struct KeychainItem : Codable {
     let otpAuth: OtpAuth
     
-    public init(otpAuth: OtpAuth) {
+    public init(from otpAuth: OtpAuth) {
         self.otpAuth = otpAuth
     }
 }

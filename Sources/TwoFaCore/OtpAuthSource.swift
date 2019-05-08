@@ -11,15 +11,15 @@ import Foundation
 
 // Abstraction for specific input (keyboard, pasteboard...)
 public protocol OtpAuthSource {
-    func getSync(nameHint: String?) throws -> OtpAuth?
-    func getInLoopSync(nameHint: String?) throws -> OtpAuth
+    func getSync(label: String?) throws -> OtpAuth?
+    func getInLoopSync(label: String?) throws -> OtpAuth
 }
 
 public extension OtpAuthSource {
-    func getInLoopSync(nameHint: String?) throws -> OtpAuth {
+    func getInLoopSync(label: String?) throws -> OtpAuth {
         var result: OtpAuth? = nil
         repeat {
-            result = try self.getSync(nameHint: nameHint)
+            result = try self.getSync(label: label)
         } while result == nil
         
         return result!
@@ -27,7 +27,7 @@ public extension OtpAuthSource {
 }
 
 public class TerminalOtpAuthSource : OtpAuthSource {
-    public func getSync(nameHint: String?) throws -> OtpAuth? {
+    public func getSync(label: String?) throws -> OtpAuth? {
         fatalError("Not implemented")
     }
 }
@@ -91,6 +91,29 @@ public struct OtpAuth : Codable, CustomStringConvertible {
     public let issuer: String?
     public let digits: OtpDigits
     public let algorithm: OtpAlgorithm
+    
+    public init(label: String, secretStr: String) throws {
+        self = try OtpAuthStringParser().parse(label: label, secretStr: secretStr)
+    }
+    
+    public init(uri: String, label: String?) throws {
+        self = try OtpAuthStringParser().parse(uri, label: label)
+    }
+    
+    public init(type: OtpType,
+                label: String,
+                secret: [UInt8],
+                issuer: String?,
+                digits: OtpDigits,
+                algorithm: OtpAlgorithm)
+    {
+        self.type = type
+        self.label = label
+        self.secret = secret
+        self.issuer = issuer
+        self.digits = digits
+        self.algorithm = algorithm
+    }
     
     public var description: String {
         get {

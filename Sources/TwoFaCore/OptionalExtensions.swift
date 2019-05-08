@@ -8,21 +8,32 @@
 import Commander
 import Foundation
 
-extension Optional: CustomStringConvertible where Wrapped: ArgumentConvertible {
-    public var description: String {
-        if let val = self {
-            return "Some(\(val))"
+extension Optional where Wrapped : ArgumentConvertible {
+    public init(parser: ArgumentParser) throws {
+        do {
+            self = .some(try Wrapped(parser: parser))
+        } catch ArgumentError.missingValue {
+            self = .none
+        } catch {
+            throw error
         }
-        return "None"
     }
 }
 
-extension Optional: ArgumentConvertible where Wrapped: ArgumentConvertible {
-    public init(parser: ArgumentParser) throws {
-        if let wrapped = parser.shift() as? Wrapped {
-            self = wrapped
-        } else {
-            self = .none
+
+extension Optional where Wrapped : CustomStringConvertible {
+    public var description: String {
+        switch self {
+        case .some(let value):
+            return value.description
+        case .none:
+            return ""
         }
     }
 }
+
+#if swift(>=4.1)
+extension Array : ArgumentConvertible where Element : ArgumentConvertible {}
+extension Optional : ArgumentConvertible where Wrapped : ArgumentConvertible {}
+extension Optional : CustomStringConvertible where Wrapped : CustomStringConvertible {}
+#endif

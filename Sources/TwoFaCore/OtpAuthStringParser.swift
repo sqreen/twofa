@@ -12,6 +12,9 @@ import Base32
 
 public class OtpAuthStringParser {
     
+    let defaultDigits = OtpDigits.six
+    let defaultAlgorithm = OtpAlgorithm.sha1
+    
     public enum ParseError : Swift.Error {
         case notAnUrl(String)
         case missingScheme
@@ -33,7 +36,19 @@ public class OtpAuthStringParser {
         
     }
     
-    public func parse(_ str: String, nameHint: String? = nil) throws -> OtpAuth {
+    public func parse(label: String, secretStr: String, type: OtpType = .totp(period: nil)) throws -> OtpAuth {
+        return OtpAuth(
+            type: type,
+            label: label,
+            secret: try self.decodeSecret(secretStr),
+            issuer: nil,
+            digits: self.defaultDigits,
+            algorithm: self.defaultAlgorithm)
+    }
+    
+    public func parse(_ str: String, label labelOverride: String? = nil) throws -> OtpAuth {
+        
+        print("Parsing: \(str)")
         
         guard let url = URL(string: str) else {
             throw ParseError.notAnUrl(str)
@@ -75,17 +90,15 @@ public class OtpAuthStringParser {
             throw ParseError.unknownType(typeStr)
         }
         
-        let labelCandidate = String(url.path[url.path.index(after: url.path.startIndex)...])
         let label: String
-        
-        if labelCandidate.isEmpty {
-            if let nameHint = nameHint {
-                label = nameHint
-            } else {
-                throw ParseError.emptyLabel
-            }
+        if let labelOverride = labelOverride {
+            label = labelOverride
         } else {
-            label = labelCandidate
+            label = String(url.path[url.path.index(after: url.path.startIndex)...])
+        }
+        
+        if label.isEmpty {
+            throw ParseError.emptyLabel
         }
         
         let labelParts = label.split(separator: ":")
@@ -109,9 +122,7 @@ public class OtpAuthStringParser {
             throw ParseError.missingSecret
         }
         
-        guard let secret = base32Decode(secretStr) else {
-            throw ParseError.invalidSecret(secretStr)
-        }
+        let secret = try self.decodeSecret(secretStr)
         
         let issuer = url.valueOf("issuer") ?? providerBackup
         
@@ -122,7 +133,7 @@ public class OtpAuthStringParser {
             }
             digits = digitCandidate
         } else {
-            digits = .six
+            digits = self.defaultDigits
         }
         
         let algorithm: OtpAlgorithm
@@ -132,7 +143,7 @@ public class OtpAuthStringParser {
             }
             algorithm = parsedAlgorithm
         } else {
-            algorithm = .sha1
+            algorithm = self.defaultAlgorithm
         }
         
         return OtpAuth(
@@ -142,5 +153,12 @@ public class OtpAuthStringParser {
             issuer: issuer,
             digits: digits,
             algorithm: algorithm)
+    }
+    
+    public func decodeSecret(_ secretStr: String) throws -> [UInt8] {
+        guard let secret = base32Decode(secretStr) else {
+            throw ParseError.invalidSecret(secretStr)
+        }
+        return secret
     }
 }

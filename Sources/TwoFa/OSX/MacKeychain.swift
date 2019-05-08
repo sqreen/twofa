@@ -40,6 +40,10 @@ class MacKeychain : CoreKeychain {
     
     let KEY = "keychainItemJson"
     
+    func remove(_ service: String) throws {
+        fatalError("Not implemented")
+    }
+    
     func get(_ service: String) throws -> KeychainItem? {
         var returnError: Error? = nil
         var keychainItem: KeychainItem? = nil

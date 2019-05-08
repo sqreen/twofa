@@ -10,7 +10,7 @@ import CoreImage
 import TwoFaCore
 
 extension CIImage {
-    func parseQR(nameHint: String? = nil) throws -> OtpAuth? {
+    func parseQR(label: String? = nil) throws -> OtpAuth? {
         let detector = CIDetector(ofType: CIDetectorTypeQRCode,
                                   context: nil,
                                   options: [CIDetectorAccuracy: CIDetectorAccuracyHigh])
@@ -23,7 +23,7 @@ extension CIImage {
         }
         
         for otpAuthStr in otpStrings {
-            return try parser.parse(otpAuthStr, nameHint: nameHint)
+            return try parser.parse(otpAuthStr, label: label)
         }
         
         return nil
