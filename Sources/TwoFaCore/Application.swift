@@ -64,6 +64,14 @@ public class Application {
                 }
             }
             
+            $0.command("rm", Argument<String>("label")) { label in
+                do {
+                    try self.keychain.removeWithAuth(label)
+                } catch KeychainError.itemNotFound {
+                    print("Item '\(label)' not found")
+                }
+            }
+            
             $0.command(
                 "add",
                 Option<String?>("label", default: .none),

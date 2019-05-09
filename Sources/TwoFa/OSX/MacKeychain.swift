@@ -14,41 +14,22 @@ typealias _KeychainLib = KeychainAccess.Keychain
 
 class MacKeychain : CoreKeychain {
     static let itemService = "org.janiskirsteins.twofa-items"
-    static let metaService = "org.janiskirsteins.twofa-meta"
-    static let metaSetKey = "itemSet"
-    static let metaSetReadPrompt = "access the list of known services"
-    static let metaSetUpdatePrompt = "update the list of known services"
     
-    private func itemPrompt(label: String) -> String {
+    private func itemPrompt(_ label: String) -> String {
         return "access the account '\(label)'"
     }
     
-    /// Add an item to the keychain. If it succeeds, update
-    /// the list of accounts as well.
-    ///
-    /// If the list update fails, we will try to remove the just-added item as well.
-    ///
-    /// It's not great, but we have no way to enumerate the items in the keychain, so we have
-    /// to maintain this list ourselves.
-    func add(_ item: KeychainItem) throws {
-//        try self.remove(service: MacKeychain.itemService, label: item.otp.label)
-        
-        try addCodable(service: MacKeychain.itemService, label: item.otp.label, item: item)
-        do {
-            try self.addMetaLabel(item.otp.label)
-        } catch {
-            try self.remove(service: MacKeychain.itemService, label: item.otp.label)
-            throw error
-        }
+    private func removePrompt(_ label: String) -> String {
+        return "remove the account '\(label)'"
     }
     
-    // NOTE: this can lose all the metadata, if the save doesn't succeed
-    private func addMetaLabel(_ label: String) throws {
-        var set = try self.getMetaSet(prompt: MacKeychain.metaSetUpdatePrompt)
-        set.insert(label)
-        
-        try remove(service: MacKeychain.metaService, label: MacKeychain.metaSetKey)
-        try addCodable(service: MacKeychain.metaService, label: MacKeychain.metaSetKey, item: set)
+    private func presenceTestPrompt(_ label: String) -> String {
+        return "check if the account '\(label)' exists"
+    }
+    
+    /// Add an item to the keychain
+    func add(_ item: KeychainItem) throws {
+        try addCodable(service: MacKeychain.itemService, label: item.otp.label, item: item)
     }
     
     private func addCodable<T: Encodable>(service: String, label: String, item: T) throws {
@@ -81,8 +62,17 @@ class MacKeychain : CoreKeychain {
         try keychain.remove(label)
     }
     
+    public func removeWithAuth(_ label: String) throws {
+        let keychain = _KeychainLib(service: MacKeychain.itemService)
+        if keychain.authenticationPrompt(presenceTestPrompt(label)).allKeys().contains(label) {
+            try remove(service: MacKeychain.itemService, label: label)
+        } else {
+            throw KeychainError.itemNotFound
+        }
+    }
+    
     func get(_ label: String) throws -> KeychainItem {
-        return try self.getCodable(service: MacKeychain.itemService, label: label, prompt: itemPrompt(label: label))
+        return try self.getCodable(service: MacKeychain.itemService, label: label, prompt: itemPrompt(label))
     }
     
     private func getCodable<T: Decodable>(service: String, label: String, prompt: String) throws -> T  {
@@ -118,15 +108,7 @@ class MacKeychain : CoreKeychain {
         throw KeychainError.itemNotFound
     }
     
-    private func getMetaSet(prompt: String = MacKeychain.metaSetReadPrompt) throws -> Set<String> {
-        do {
-            return try getCodable(service: MacKeychain.metaService, label: MacKeychain.metaSetKey, prompt: prompt)
-        } catch KeychainError.itemNotFound {
-            return Set<String>()
-        }
-    }
-    
     public func enumerateLabels() throws -> [String] {
-        return Array(try self.getMetaSet())
+        return Array(_KeychainLib(service: MacKeychain.itemService).allKeys())
     }
 }

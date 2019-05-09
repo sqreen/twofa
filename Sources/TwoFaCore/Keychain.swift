@@ -10,7 +10,8 @@ import Foundation
 public protocol Keychain {
     func enumerateLabels() throws -> [String]
     func add(_ item: KeychainItem) throws
-    func get(_ name: String) throws -> KeychainItem
+    func get(_ label: String) throws -> KeychainItem
+    func removeWithAuth(_ label: String) throws
 }
 
 public enum KeychainError : Error {
