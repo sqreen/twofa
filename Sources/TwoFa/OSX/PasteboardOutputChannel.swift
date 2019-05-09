@@ -14,6 +14,7 @@ public class PasteboardOutputChannel : OutputChannel {
     
     public func open() {
         self.oldContents = NSPasteboard.general.string(forType: .string)
+        print("The current code will be automatically synced to the pasteboard. Previous pasteboard content will be restored afterwards.")
     }
     
     public func send(_ code: String, remaining: TimeInterval) {
@@ -21,6 +22,7 @@ public class PasteboardOutputChannel : OutputChannel {
     }
     
     public func close() {
+        print("Restoring the previous pasteboard content.")
         self.set(self.oldContents)
     }
     

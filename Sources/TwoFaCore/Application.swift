@@ -32,7 +32,9 @@ public class Application {
                 }
             }
             
-            $0.command("get", Argument<String>("label")) { label in
+            $0.command("get",
+                       Flag("stdout"),
+                       Argument<String>("label")) { useStdout, label in
                 do {
                     let item = try self.keychain.get(label) 
                     
@@ -48,13 +50,36 @@ public class Application {
                             fatalError("Invalid generator parameters")
                     }
                     
-                    for c in self.outputs { c.open() }
-                    defer { for c in self.outputs { c.close()} }
+                    // Have a cutoff date spanning at least 1 period fully, so you can not forget
+                    // that the app is running and generating codes
+                    let cutoffDate = Date() + TimeInterval(period)*2
+                    var wasCutoff = false
+                    
+                    let activeOutputs = self.outputs.filter { ($0 is StdoutOutputChannel && useStdout) || !($0 is StdoutOutputChannel) }
+                    
+                    if !useStdout {
+                        print("NOTE: not outputting the code to stdout due to lack of --stdout")
+                    }
+                    
+                    for c in activeOutputs { c.open() }
+                    defer {
+                        for c in activeOutputs { c.close()}
+                        if wasCutoff {
+                            print("Quitting due to timeout")
+                        }
+                    }
                     
                     repeat {
-                        let remaining = TimeInterval(period) - Date().timeIntervalSince1970.truncatingRemainder(dividingBy: TimeInterval(period))
+                        let now = Date()
+                        let remaining = TimeInterval(period) - now.timeIntervalSince1970.truncatingRemainder(dividingBy: TimeInterval(period))
                         let code = try generator.successor().password(at: Date())
-                        for c in self.outputs { c.send(code, remaining: remaining) }
+                        for c in activeOutputs { c.send(code, remaining: remaining) }
+                        
+                        if now > cutoffDate {
+                            wasCutoff = true
+                            break
+                        }
+                        
                         sleep(1)
                     } while !self.appHost.shouldQuit
                 } catch KeychainError.itemNotFound {
