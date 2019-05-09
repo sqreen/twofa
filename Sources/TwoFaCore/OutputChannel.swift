@@ -28,7 +28,7 @@ public class StdoutOutputChannel : OutputChannel {
     }
     
     public func send(_ code: String, remaining: TimeInterval) {
-        print("\rCode (\(Int(remaining))s): \(code)", terminator: "")
+        print("\rCode (\(remaining < 10 ? "0" : "")\(Int(remaining))s): \(code)", terminator: "")
         fflush(__stdoutp)
     }
     
