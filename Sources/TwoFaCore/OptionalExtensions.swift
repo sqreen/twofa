@@ -20,7 +20,6 @@ extension Optional where Wrapped : ArgumentConvertible {
     }
 }
 
-
 extension Optional where Wrapped : CustomStringConvertible {
     public var description: String {
         switch self {

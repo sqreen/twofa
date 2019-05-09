@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import Base32
 
 // https://github.com/google/google-authenticator/wiki/Key-Uri-Format
 
@@ -44,6 +45,20 @@ public enum OtpType: Codable {
     
     case totp(period: Int)
     case hotp(counter: Int)
+    
+    public var name: String {
+        switch(self) {
+        case .totp(_): return "totp"
+        case .hotp(_): return "hotp"
+        }
+    }
+    
+    public var queryArgs: String {
+        switch(self) {
+        case .totp(let period): return "period=\(period)"
+        case .hotp(let counter): return "counter=\(counter)"
+        }
+    }
     
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
@@ -117,7 +132,7 @@ public struct OtpAuth : Codable, CustomStringConvertible {
     
     public var description: String {
         get {
-            return "[OtpAuth label:\(self.label)]"
+            return "otpauth://\(type.name)/\(label)?secret=\(base32Encode(secret))&issuer=\(issuer)&digits=\(digits.rawValue)&algorithm=\(algorithm)&\(type.queryArgs)"
         }
     }
 }

@@ -3,6 +3,7 @@ import Commander
 import CoreImage
 import OneTimePassword
 import AppKit
+import Base32
 
 public class Application {
 
@@ -67,8 +68,9 @@ public class Application {
                 "add",
                 Option<String?>("label", default: .none),
                 Option<String?>("secret", default: .none),
-                Option<String?>("uri", default: .none)
-            ) { label, secretStr, uri in
+                Option<String?>("uri", default: .none),
+                Flag("debug", default: false)
+            ) { label, secretStr, uri, debug in
                 
                 do {
                     let otpAuth: OtpAuth
@@ -83,6 +85,9 @@ public class Application {
                     // demo1: otpauth://totp/avi-9605?secret=LZYSI2TSMRSWOYJSPEYSM5Q&issuer=SparkPost
                     // demo2: --name Poloniex --secret 2FULJJMNMVVDYXLTV
                     let item = KeychainItem(from: otpAuth)
+                    if debug {
+                        print("Adding: \(otpAuth)")
+                    }
                     try self.keychain.add(item)
                 } catch OtpAuthStringParser.ParseError.notAnUrl(let u) {
                     print("Invalid URI: \(u)")
