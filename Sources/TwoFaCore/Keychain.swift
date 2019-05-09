@@ -12,6 +12,7 @@ public protocol Keychain {
     func add(_ item: KeychainItem) throws
     func get(_ label: String) throws -> KeychainItem
     func removeWithAuth(_ label: String) throws
+    func selfTest() throws
 }
 
 public enum KeychainError : Error {

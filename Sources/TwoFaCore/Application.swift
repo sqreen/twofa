@@ -32,6 +32,15 @@ public class Application {
                 }
             }
             
+            $0.command("test") {
+                do {
+                    try self.keychain.selfTest()
+                    print("OK")
+                } catch {
+                    print("Test failed: \(error)")
+                }
+            }
+            
             $0.command("get",
                        Flag("stdout"),
                        Argument<String>("label")) { useStdout, label in

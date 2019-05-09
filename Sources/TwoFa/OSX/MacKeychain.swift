@@ -14,6 +14,7 @@ typealias _KeychainLib = KeychainAccess.Keychain
 
 class MacKeychain : CoreKeychain {
     static let itemService = "org.janiskirsteins.twofa-items"
+    static let selfTestPrompt = "test keychain access permission"
     
     private func itemPrompt(_ label: String) -> String {
         return "access the account '\(label)'"
@@ -30,6 +31,21 @@ class MacKeychain : CoreKeychain {
     /// Add an item to the keychain
     func add(_ item: KeychainItem) throws {
         try addCodable(service: MacKeychain.itemService, label: item.otp.label, item: item)
+    }
+    
+    /// Self test (to see if the entitlements are working correctly)
+    func selfTest() throws {
+        defer {
+            do {
+                try remove(service: MacKeychain.itemService, label: "___selftest___")
+            } catch {
+                print("Failed to clean up: \(error)")
+            }
+        }
+        
+        try addCodable(service: MacKeychain.itemService, label: "___selftest___", item: ["Hello World"])
+        let retrieved: [String] = try getCodable(service: MacKeychain.itemService, label: "___selftest___", prompt: MacKeychain.selfTestPrompt)
+        assert(retrieved == ["Hello World"])
     }
     
     private func addCodable<T: Encodable>(service: String, label: String, item: T) throws {

@@ -3,6 +3,17 @@ set -e
 
 EXECUTABLE="./.build/x86_64-apple-macosx10.10/debug/TwoFa"
 
-swift build -Xlinker -sectcreate -Xlinker __TEXT -Xlinker __info_plist -Xlinker Supporting/Info.plist
-codesign --entitlements "Supporting/twofa.entitlements" -f -s "Mac Developer: Janis Kirsteins (39TW4P3R2T)" "$EXECUTABLE"
+#-Xlinker -L -Xlinker /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift_static/macosx/ \
+
+swift build \
+--static-swift-stdlib \
+-Xlinker -sectcreate \
+-Xlinker __TEXT -Xlinker __info_plist -Xlinker Supporting/Info.plist \
+-Xlinker -lobjc \
+-Xlinker -lSystem \
+
+ID="Developer ID Application: Notakey Latvia, SIA (N2JEMR5FZG)"
+# Developer ID Application: Notakey Latvia, SIA (N2JEMR5FZG)
+
+codesign --entitlements "Supporting/twofa.entitlements" -f -s "$ID" "$EXECUTABLE"
 "$EXECUTABLE" $@
