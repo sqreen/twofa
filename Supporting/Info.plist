@@ -2,17 +2,17 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>CFBundlePackageType</key>
+	<string>BNDL</string>
 	<key>CFBundleIdentifier</key>
 	<string>org.janiskirsteins.twofa</string>
 	<key>CFBundleName</key>
-	<string>test</string>
-	<key>CFBundlePackageType</key>
-	<string>APPL</string>
+	<string>Sqreen&apos;s TwoFa</string>
 	<key>CFBundleShortVersionString</key>
-	<string>1.0.0</string>
+	<string>0.0.1</string>
 	<key>CFBundleVersion</key>
-	<string>1.0.0</string>
+	<string>0.0.1</string>
 	<key>NSHumanReadableCopyright</key>
-	<string>Copyright © 2019 Janis Kirsteins. All rights reserved.</string>
+	<string>Copyright © 2019 Sqreen Inc. All rights reserved.</string>
 </dict>
 </plist>

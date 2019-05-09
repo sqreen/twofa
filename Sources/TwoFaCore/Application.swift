@@ -11,16 +11,16 @@ public class Application {
     let keychain: Keychain
     let source: OtpAuthSource
     let outputs: [OutputChannel]
-    
+
     public init(appHost: ApplicationHost, keychain: Keychain, source: OtpAuthSource, outputs: [OutputChannel]) {
         self.appHost = appHost
         self.keychain = keychain
         self.source = source
         self.outputs = outputs
     }
-    
+
     public func run() {
-        
+
         let group = Group {
             $0.command("list") {
                 do {
@@ -31,7 +31,13 @@ public class Application {
                     print("Failed to list the items: \(error)")
                 }
             }
-            
+
+            $0.command("version") {
+                let bundleID = Bundle.main
+                let appVersion = Bundle.main.infoDictionary!["CFBundleShortVersionString"] as? String ?? "unknown"
+                print("Version: \(appVersion)")
+            }
+
             $0.command("test") {
                 do {
                     try self.keychain.selfTest()
@@ -40,17 +46,17 @@ public class Application {
                     print("Test failed: \(error)")
                 }
             }
-            
+
             $0.command("get",
                        Flag("stdout"),
                        Argument<String>("label")) { useStdout, label in
                 do {
-                    let item = try self.keychain.get(label) 
-                    
+                    let item = try self.keychain.get(label)
+
                     guard case .totp(let period) = item.otp.type else {
                         fatalError("HOTP not implemented")
                     }
-                    
+
                     guard let generator = Generator(
                         factor: .timer(period: TimeInterval(period)),
                         secret: Data(item.otp.secret),
@@ -58,18 +64,18 @@ public class Application {
                         digits: item.otp.digits.rawValue) else {
                             fatalError("Invalid generator parameters")
                     }
-                    
+
                     // Have a cutoff date spanning at least 1 period fully, so you can not forget
                     // that the app is running and generating codes
                     let cutoffDate = Date() + TimeInterval(period)*2
                     var wasCutoff = false
-                    
+
                     let activeOutputs = self.outputs.filter { ($0 is StdoutOutputChannel && useStdout) || !($0 is StdoutOutputChannel) }
-                    
+
                     if !useStdout {
                         print("NOTE: not outputting the code to stdout due to lack of --stdout")
                     }
-                    
+
                     for c in activeOutputs { c.open() }
                     defer {
                         for c in activeOutputs { c.close()}
@@ -77,18 +83,18 @@ public class Application {
                             print("Quitting due to timeout")
                         }
                     }
-                    
+
                     repeat {
                         let now = Date()
                         let remaining = TimeInterval(period) - now.timeIntervalSince1970.truncatingRemainder(dividingBy: TimeInterval(period))
                         let code = try generator.successor().password(at: Date())
                         for c in activeOutputs { c.send(code, remaining: remaining) }
-                        
+
                         if now > cutoffDate {
                             wasCutoff = true
                             break
                         }
-                        
+
                         sleep(1)
                     } while !self.appHost.shouldQuit
                 } catch KeychainError.itemNotFound {
@@ -97,7 +103,7 @@ public class Application {
                     print("Unexpected error: \(error)")
                 }
             }
-            
+
             $0.command("rm", Argument<String>("label")) { label in
                 do {
                     try self.keychain.removeWithAuth(label)
@@ -105,7 +111,7 @@ public class Application {
                     print("Item '\(label)' not found")
                 }
             }
-            
+
             $0.command(
                 "add",
                 Option<String?>("label", default: .none),
@@ -113,7 +119,7 @@ public class Application {
                 Option<String?>("uri", default: .none),
                 Flag("debug", default: false)
             ) { label, secretStr, uri, debug in
-                
+
                 do {
                     let otpAuth: OtpAuth
                     if let uri = uri {
@@ -123,7 +129,7 @@ public class Application {
                     } else {
                         otpAuth = try self.source.getInLoopSync(label: label)
                     }
-                    
+
                     // demo1: otpauth://totp/avi-9605?secret=LZYSI2TSMRSWOYJSPEYSM5Q&issuer=SparkPost
                     // demo2: --name Poloniex --secret 2FULJJMNMVVDYXLTV
                     let item = KeychainItem(from: otpAuth)
@@ -144,10 +150,7 @@ public class Application {
                 }
             }
         }
-        
+
         self.appHost.run { group.run() }
     }
 }
-
-
-

@@ -8,7 +8,7 @@
 	<string>N2JEMR5FZG</string>
 	<key>com.apple.application-identifier</key>
 	<string>N2JEMR5FZG.org.janiskirsteins.twofa</string>
-	<key>com.apple.security.app-sandbox</key>
+	<key>com.apple.security.files.user-selected.read-write</key>
 	<true/>
 	<key>keychain-access-groups</key>
 	<array>

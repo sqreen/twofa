@@ -11,7 +11,7 @@ project.targets.find {|x| x.name == "TwoFa"}.build_configurations.each do |confi
     config.build_settings["INFOPLIST_FILE"] = "Supporting/Info.plist"
     config.build_settings["SUPPORTED_PLATFORMS"] = "macosx"
     config.build_settings["CODE_SIGN_ENTITLEMENTS"] = "Supporting/twofa.entitlements"
-    config.build_settings["CODE_SIGN_IDENTITY"] = "Mac Developer: Janis Kirsteins (39TW4P3R2T)"
+    config.build_settings["CODE_SIGN_IDENTITY"] = "Developer ID Application: Notakey Latvia, SIA (N2JEMR5FZG)"
 end
 
 project.targets.find {|x| x.name == "TwoFaCore"}.build_configurations.each do |config|
