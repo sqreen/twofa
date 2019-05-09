@@ -22,7 +22,7 @@ public extension OtpAuthSource {
         repeat {
             result = try self.getSync(label: label)
         } while result == nil
-        
+
         return result!
     }
 }
@@ -37,32 +37,32 @@ public enum OtpType: Codable {
     private enum CodingKeys: String, CodingKey {
         case base, totpParams, hotpParams
     }
-    
+
     private enum Base : String, Codable {
         case totp
         case hotp
     }
-    
+
     case totp(period: Int)
     case hotp(counter: Int)
-    
+
     public var name: String {
         switch(self) {
         case .totp(_): return "totp"
         case .hotp(_): return "hotp"
         }
     }
-    
+
     public var queryArgs: String {
         switch(self) {
         case .totp(let period): return "period=\(period)"
         case .hotp(let counter): return "counter=\(counter)"
         }
     }
-    
+
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
-        
+
         switch self {
         case .totp(let period):
             try container.encode(Base.totp, forKey: .base)
@@ -72,11 +72,11 @@ public enum OtpType: Codable {
             try container.encode(counter, forKey: .hotpParams)
         }
     }
-    
+
     public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         let base = try container.decode(Base.self, forKey: .base)
-        
+
         switch base {
         case .totp:
             let period = try container.decode(Int.self, forKey: .totpParams)
@@ -106,15 +106,15 @@ public struct OtpAuth : Codable, CustomStringConvertible {
     public let issuer: String?
     public let digits: OtpDigits
     public let algorithm: OtpAlgorithm
-    
+
     public init(label: String, secretStr: String) throws {
         self = try OtpAuthStringParser().parse(label: label, secretStr: secretStr)
     }
-    
+
     public init(uri: String, label: String?) throws {
         self = try OtpAuthStringParser().parse(uri, label: label)
     }
-    
+
     public init(type: OtpType,
                 label: String,
                 secret: [UInt8],
@@ -129,12 +129,10 @@ public struct OtpAuth : Codable, CustomStringConvertible {
         self.digits = digits
         self.algorithm = algorithm
     }
-    
+
     public var description: String {
         get {
-            return "otpauth://\(type.name)/\(label)?secret=\(base32Encode(secret))&issuer=\(issuer)&digits=\(digits.rawValue)&algorithm=\(algorithm)&\(type.queryArgs)"
+            return "otpauth://\(type.name)/\(label)?secret=\(base32Encode(secret))&issuer=\(String(describing: issuer))&digits=\(digits.rawValue)&algorithm=\(algorithm)&\(type.queryArgs)"
         }
     }
 }
-
-
