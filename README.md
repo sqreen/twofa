@@ -1,12 +1,12 @@
 <h1 align="center">twofa</h1>
 
-<section align="center">
+<p align="center">
   TouchID-aware 2-factor authentication for macOS
-</section>
+</p>
 
-<section align="center"><small>
-  Licenced under an MIT licence.
-</section></small>
+<p align="center">
+  <small>Licenced under an MIT licence.</small>
+</p>
 
 ![Screenshot of twofa asking for authentication](img/get.png)
 
@@ -23,8 +23,7 @@
   - [Before Building](#before-building)
   - [swift build](#swift-build)
   - [Xcode](#xcode)
-- Contributing
-  - TODO
+- [Contributing](#contributing)
 
 ## Overview
 
@@ -72,6 +71,8 @@ However, it should be possible to add Linux support using a different underlying
 
 ## Usage
 
+> If you want to test the app with a test account, you can use http://security-totp.appspot.com
+
 ![](img/main.png)
 
 What you want to do normally is run:
@@ -97,7 +98,7 @@ The OTP will not be output by default, and instead will be put directly into the
 
 ### add
 
-    $twofa add [--label <label> --secret <secret>] [--uri <otpauth_uri>] [--debug]
+    $ twofa add [--label <label> --secret <secret>] [--uri <otpauth_uri>] [--debug]
 
 You can call this with no extra arguments, and the default behaviour will be to wait for a valid screenshot to appear in the pasteboard of your Mac.
 
@@ -185,3 +186,7 @@ It invokes `swift package generate-xcodeproj` and then applies configuration cha
 - embed the Info.plist into the binary after building
 - use the correct entitlements file
 - set the correct signing identity
+
+## Contributing
+
+Contributions are welcomed and encouraged!
