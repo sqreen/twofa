@@ -189,4 +189,4 @@ It invokes `swift package generate-xcodeproj` and then applies configuration cha
 
 ## Contributing
 
-Contributions are welcomed and encouraged!
+Contributions are welcomed and encouraged! Take a look at the [contribution guidelines](CONTRIBUTING).
