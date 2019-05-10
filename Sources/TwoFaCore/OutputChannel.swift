@@ -14,8 +14,8 @@ public protocol OutputChannel {
 }
 
 public extension OutputChannel {
-    public func open() {}
-    public func close() {}
+    func open() {}
+    func close() {}
 }
 
 public class StdoutOutputChannel : OutputChannel {
