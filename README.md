@@ -16,7 +16,7 @@
 - [Overview](#overview)
   - [Rationale](#rationale)
   - [Supported macOS Versions](#supported-macos-versions)
-  - [Info.plist](#info.plist)
+  - [Info.plist](#infoplist)
   - [macOS entitlements](#macos-entitlements)
   - [Platform Support](#platform-support)
 - [Usage](#usage)
@@ -53,6 +53,8 @@ It seems that there are no good solutions available currently that mitigate thes
 
 - allow (on TouchID-equipped Macs) to use the fingerprint sensor, instead of requiring a password. This provides a much better user experience, especially if you need to generate codes often.
 - be usable from the terminal. This is a subjective point and not a problem perse, but some people prefer the simplicity of `Terminal.app`. While it is not inconceivable that a GUI (graphical user interface) is added to this project down the line, it seems much less likely that a GUI-first project would add a complementary command-line utility down the line.
+
+> **Sidenote**: originally the idea was to have TouchID mandatory, but the macOS keychain API does not support this at the moment. If such an API became available, it could be adopted to gain much stronger security guarantees. The current approach of entangling the secrets with the user's password is likely brute-forceable, whereas a hardware-backed approach would not be (or, at the very least, would make it considerably more difficult to perform an attack).
 
 ### Supported macOS Versions
 
