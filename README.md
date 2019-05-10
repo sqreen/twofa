@@ -14,6 +14,7 @@
 ## Table of Contents
 
 - [Overview](#overview)
+  - [Rationale](#rationale)
   - [Supported macOS Versions](#supported-macos-versions)
   - [Info.plist](#info.plist)
   - [macOS entitlements](#macos-entitlements)
@@ -38,6 +39,20 @@
 This constraint will require the user's password or TouchID to access the data.
 
 **Note**: It is possible to register both [time-based (TOTP)](https://en.wikipedia.org/wiki/Time-based_One-time_Password_algorithm) and [HMAC-based (HOTP)](https://en.wikipedia.org/wiki/HMAC-based_One-time_Password_algorithm) accounts, but only TOTP code generation is implemented.
+
+### Rationale
+
+While commonly 2FA (2-factor authentication) is used via a smartphone app, for heavy use a computer-based code generation can be more efficient. While there are some existing TOTP (time-based one time password) generating applications for computers, they have one or more drawbacks:
+
+- they require you to enter a password every time you want to use it
+- no command line interface 
+
+> **Sidenote**: there probably exist some authenticator apps that store the secrets in plaintext on the filesystem, and do not have the first problem. However, if such a tool existed, it would be far too insecure to use in a serious capacity
+
+It seems that there are no good solutions available currently that mitigate these, so this application was built to:
+
+- allow (on TouchID-equipped Macs) to use the fingerprint sensor, instead of requiring a password. This provides a much better user experience, especially if you need to generate codes often.
+- be usable from the terminal. This is a subjective point and not a problem perse, but some people prefer the simplicity of `Terminal.app`. While it is not inconceivable that a GUI (graphical user interface) is added to this project down the line, it seems much less likely that a GUI-first project would add a complementary command-line utility down the line.
 
 ### Supported macOS Versions
 
