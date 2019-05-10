@@ -5,8 +5,9 @@
 </p>
 
 <p align="center">
-  <small>Licenced under an MIT licence.</small>
-</p>
+  <small>Licenced under an MIT licence.</small> | Maintainer: <a href="mailto:janis@sqreen.com">Jānis Kiršteins &lt;janis@sqreen.com&gt;</a> (<a href="https://twitter.com/jkirsteins">@jkirsteins</a>)</p>
+  
+<p align="center">Copyright &copy; 2019 Sqreen</p>
 
 ![Screenshot of twofa asking for authentication](img/get.png)
 
