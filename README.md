@@ -30,6 +30,7 @@
   - [Before Building](#before-building)
   - [swift build](#swift-build)
   - [Xcode](#xcode)
+- [Testing](#testing)
 - [Contributing](#contributing)
 
 ## Overview
@@ -209,6 +210,10 @@ It invokes `swift package generate-xcodeproj` and then applies configuration cha
 - embed the Info.plist into the binary after building
 - use the correct entitlements file
 - set the correct signing identity
+
+## Testing
+
+    $ swift test
 
 ## Contributing
 
