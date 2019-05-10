@@ -1,11 +1,11 @@
 #!/bin/bash
 set -e
 
-EXECUTABLE="./.build/x86_64-apple-macosx10.10/release/TwoFa"
+EXECUTABLE="./.build/x86_64-apple-macosx/release/TwoFa"
 
 swift build \
 -c release \
---static-swift-stdlib \
+--static-swift-stdlib
 -Xlinker -sectcreate \
 -Xlinker __TEXT -Xlinker __info_plist -Xlinker Supporting/Info.plist
 
