@@ -1,0 +1,16 @@
+# Contributing to twofa
+
+It's great that you want to contribute. Thanks for that, you rock 🤘
+
+Since this is a small project, there are no real guidelines. If you open a good-quality pull request, it will very likely be accepted.
+
+Just please keep in mind the overarching "north star" of the project - to stay simple, and do one thing well.
+
+While any contributions are encouraged (including spelling mistakes), here are some ideas for contributing that would be especially useful:
+
+- 🐞 bug fixes (obviously)
+- 🛠 ability to have more fine-grained configuration (e.g. use different access levels per-account etc.)
+- 🐧 cross-platform support
+- 💯 tests 
+
+Thanks again!
