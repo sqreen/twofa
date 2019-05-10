@@ -112,7 +112,7 @@ class OtpAuthStringParserTests: XCTestCase {
         }
     }
     
-    func testParse_totpNoPeriod() {
+    func testParse_totpNoPeriod_defaultTo30() {
         let parser = OtpAuthStringParser()
         let result = try! parser.parse("otpauth://totp/label?secret=GEZDGNBV")
         
@@ -120,7 +120,7 @@ class OtpAuthStringParserTests: XCTestCase {
             XCTFail()
             return
         }
-        XCTAssertNil(period)
+        XCTAssertEqual(30, period)
     }
     
     func testParse_totpInvalidPeriod() {
