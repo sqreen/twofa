@@ -29,21 +29,21 @@
         }
       },
       {
+        "package": "KeychainAccess",
+        "repositoryURL": "https://github.com/kishikawakatsumi/KeychainAccess",
+        "state": {
+          "branch": null,
+          "revision": "0046db4ab8fd7be31a59e57912dbb96639ad8ce9",
+          "version": "3.2.0"
+        }
+      },
+      {
         "package": "OneTimePassword",
         "repositoryURL": "https://github.com/kirsis/OneTimePassword",
         "state": {
           "branch": "swiftpmtest",
           "revision": "a9ffb255f8d9968d782f4e25614de71a5a63c37b",
           "version": null
-        }
-      },
-      {
-        "package": "OpenSSL",
-        "repositoryURL": "https://github.com/IBM-Swift/OpenSSL.git",
-        "state": {
-          "branch": null,
-          "revision": "6c7e2e3610037fbc05c0d846cec981518961d8bf",
-          "version": "2.2.2"
         }
       },
       {

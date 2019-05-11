@@ -1,13 +1,14 @@
 #!/bin/bash
 set -e
 
-EXECUTABLE="./.build/x86_64-apple-macosx/release/TwoFa"
+CONFIG="release"
+EXECUTABLE="$(find .build -name TwoFa | grep $CONFIG | grep -v dSYM)"
 
-swift build \
--c release \
+BUILDOUT="$(swift build \
+-c $CONFIG \
 --static-swift-stdlib \
 -Xlinker -sectcreate \
--Xlinker __TEXT -Xlinker __info_plist -Xlinker Supporting/Info.plist
+-Xlinker __TEXT -Xlinker __info_plist -Xlinker Supporting/Info.plist)"
 
 ID="Developer ID Application: Notakey Latvia, SIA (N2JEMR5FZG)"
 
