@@ -7,6 +7,10 @@
 
 import Foundation
 
+#if os(Linux)
+import Glibc
+#endif
+
 public protocol OutputChannel {
     func open()
     func send(_ code: String, remaining: TimeInterval)
@@ -29,7 +33,7 @@ public class StdoutOutputChannel : OutputChannel {
     
     public func send(_ code: String, remaining: TimeInterval) {
         print("\rCode (\(remaining < 10 ? "0" : "")\(Int(remaining))s): \(code)", terminator: "")
-        fflush(__stdoutp)
+        fflush(stdout)
     }
     
     public func close() {

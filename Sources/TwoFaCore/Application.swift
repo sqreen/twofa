@@ -1,8 +1,7 @@
 import Commander
 
-import CoreImage
 import OneTimePassword
-import AppKit
+import Foundation
 import Base32
 
 public class Application {
