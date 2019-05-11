@@ -169,6 +169,10 @@ Before you build, you must:
 - edit `Supporting/twofa.entitlements` (**important**)
 - edit `build.sh` and `regen.sh` and replace the code sign identity string with the value corresponding to your Apple-issued key that you will use to codesign
 
+#### Linux Dependencies
+
+    $ apt-get install openssl libssl-dev
+
 ### swift build
 
 If you want to build using `swift build`, you can use the script `build.sh`. It will:
