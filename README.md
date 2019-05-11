@@ -5,33 +5,57 @@
 </p>
 
 <p align="center">
-  <small>Licenced under an MIT licence.</small>
-</p>
+  <small>Licenced under an MIT licence.</small> | Maintainer: <a href="mailto:janis@sqreen.com">Jānis Kiršteins &lt;janis@sqreen.com&gt;</a> (<a href="https://twitter.com/jkirsteins">@jkirsteins</a>)</p>
+  
+<p align="center">Copyright &copy; 2019 Sqreen</p>
 
 ![Screenshot of twofa asking for authentication](img/get.png)
 
 ## Table of Contents
 
 - [Overview](#overview)
+  - [Rationale](#rationale)
   - [Supported macOS Versions](#supported-macos-versions)
-  - [Info.plist](#info.plist)
+  - [Info.plist](#infoplist)
   - [macOS entitlements](#macos-entitlements)
   - [Platform Support](#platform-support)
 - [Usage](#usage)
+  - [add](#add)
+  - [list](#list)
+  - [rm](#rm)
+  - [test](#test)
+  - [get](#get)
 - [Installation](#installation)
 - [Building from Source](#building-from-source)
   - [Before Building](#before-building)
   - [swift build](#swift-build)
   - [Xcode](#xcode)
+- [Testing](#testing)
 - [Contributing](#contributing)
 
 ## Overview
 
-`twofa` is written in Swift. It uses the macOS keychain API to store one-time password generation parameters using the [`.userPresence`](https://developer.apple.com/documentation/security/secaccesscontrolcreateflags/1392879-userpresence) constraint.
+`twofa` is written in Swift. It uses the macOS keychain API to store one-time password generation parameters using the [`.userPresence`](https://developer.apple.com/documentation/security/secaccesscontrolcreateflags/1392879-userpresence) and [`.whenPasscodeSetThisDeviceOnly`](https://developer.apple.com/documentation/security/ksecattraccessiblewhenpasscodesetthisdeviceonly) constraints.
 
 This constraint will require the user's password or TouchID to access the data.
 
 **Note**: It is possible to register both [time-based (TOTP)](https://en.wikipedia.org/wiki/Time-based_One-time_Password_algorithm) and [HMAC-based (HOTP)](https://en.wikipedia.org/wiki/HMAC-based_One-time_Password_algorithm) accounts, but only TOTP code generation is implemented.
+
+### Rationale
+
+While commonly 2FA (2-factor authentication) is used via a smartphone app, for heavy use a computer-based code generation can be more efficient. While there are some existing TOTP (time-based one time password) generating applications for computers, they have one or more drawbacks:
+
+- they require you to enter a password every time you want to use it
+- no command line interface 
+
+> **Sidenote**: there probably exist some authenticator apps that store the secrets in plaintext on the filesystem, and do not have the first problem. However, if such a tool existed, it would be far too insecure to use in a serious capacity
+
+It seems that there are no good solutions available currently that mitigate these, so this application was built to:
+
+- allow (on TouchID-equipped Macs) to use the fingerprint sensor, instead of requiring a password. This provides a much better user experience, especially if you need to generate codes often.
+- be usable from the terminal. This is a subjective point and not a problem perse, but some people prefer the simplicity of `Terminal.app`. While it is not inconceivable that a GUI (graphical user interface) is added to this project down the line, it seems much less likely that a GUI-first project would add a complementary command-line utility down the line.
+
+> **Sidenote**: originally the idea was to have TouchID mandatory, but the macOS keychain API does not support this at the moment. If such an API became available, it could be adopted to gain much stronger security guarantees. The current approach of entangling the secrets with the user's password is likely brute-forceable, whereas a hardware-backed approach would not be (or, at the very least, would make it considerably more difficult to perform an attack).
 
 ### Supported macOS Versions
 
@@ -190,6 +214,10 @@ It invokes `swift package generate-xcodeproj` and then applies configuration cha
 - embed the Info.plist into the binary after building
 - use the correct entitlements file
 - set the correct signing identity
+
+## Testing
+
+    $ swift test
 
 ## Contributing
 
