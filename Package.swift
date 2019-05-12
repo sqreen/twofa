@@ -4,15 +4,20 @@
 import PackageDescription
 
 let platformTarget: Target
+var platformDeps: [Package.Dependency] = []
 
 #if os(macOS)
 platformTarget = .target(
     name: "TwoFaMac",
     dependencies: ["TwoFaCore", "KeychainAccess"])
+
+platformDeps.append(.package(url: "https://github.com/kishikawakatsumi/KeychainAccess", from: "3.0.0"))
 #elseif os(Linux)
 platformTarget = .target(
     name: "TwoFaLinux",
-    dependencies: ["TwoFaCore"])
+    dependencies: ["TwoFaCore", "PythonKit"])
+
+platformDeps.append(.package(url: "https://github.com/pvieito/PythonKit.git", .branch("master")))
 #endif
 
 var package = Package(
@@ -22,7 +27,7 @@ var package = Package(
         .package(url: "https://github.com/onevcat/Rainbow", from: "3.0.0"),
         .package(url: "https://github.com/norio-nomura/Base32", from: "0.5.4"),
         .package(url: "https://github.com/kirsis/OneTimePassword", .branch("swiftpmtest")),
-    ],
+    ] + platformDeps,
     targets: [
         
         // Executable
@@ -48,6 +53,3 @@ var package = Package(
             dependencies: [Target.Dependency(stringLiteral: platformTarget.name)])
     ]
 )
-#if os(OSX)
-        package.dependencies.append(.package(url: "https://github.com/kishikawakatsumi/KeychainAccess", from: "3.0.0"))
-#endif

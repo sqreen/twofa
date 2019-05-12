@@ -7,4 +7,9 @@ import TwoFaMac
 import TwoFaLinux
 #endif
 
-ApplicationFactory().create().run()
+do {
+    let app = try ApplicationFactory().create()
+    app.run()
+} catch {
+    print("Could not initialize application dependencies: \(error)")
+}

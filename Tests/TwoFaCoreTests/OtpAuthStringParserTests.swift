@@ -243,4 +243,32 @@ class OtpAuthStringParserTests: XCTestCase {
             XCTFail()
         }
     }
+    
+    static var allTests = [
+        ("testParse_notAnUrl", testParse_notAnUrl),
+        ("testParse_noScheme", testParse_noScheme),
+        ("testParse_invalidScheme", testParse_invalidScheme),
+        ("testParse_missingType", testParse_missingType),
+        ("testParse_emptyLabel", testParse_emptyLabel),
+        ("testParse_labelNoProvider", testParse_labelNoProvider),
+        ("testParse_labelNoProviderHasIssuer", testParse_labelNoProviderHasIssuer),
+        ("testParse_labelAndProviderNoIssuer", testParse_labelAndProviderNoIssuer),
+        ("testParse_providerAndIssuerDifferent", testParse_providerAndIssuerDifferent),
+        ("testParse_providerAndIssuerSame", testParse_providerAndIssuerSame),
+        ("testParse_unknownType", testParse_unknownType),
+        ("testParse_totpNoPeriod_defaultTo30", testParse_totpNoPeriod_defaultTo30),
+        ("testParse_totpInvalidPeriod", testParse_totpInvalidPeriod),
+        ("testParse_totpValidPeriod", testParse_totpValidPeriod),
+        ("testParse_hotpMissingCounter", testParse_hotpMissingCounter),
+        ("testParse_hotpInvalidCounter", testParse_hotpInvalidCounter),
+        ("testParse_hotpValidCounter", testParse_hotpValidCounter),
+        ("testParse_algorithmSha1", testParse_algorithmSha1),
+        ("testParse_uppercase", testParse_uppercase),
+        ("testParse_algorithmSha256", testParse_algorithmSha256),
+        ("testParse_algorithmSha512", testParse_algorithmSha512),
+        ("testParse_invalidAlgorithm", testParse_invalidAlgorithm),
+        ("testParse_defaultAlgorithm", testParse_defaultAlgorithm),
+        ("testParse_missingSecret", testParse_missingSecret),
+        ("testParse_invalidSecret", testParse_invalidSecret),
+    ]
 }
