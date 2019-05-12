@@ -2,7 +2,7 @@
 set -e
 
 CONFIG="release"
-EXECUTABLE="$(find .build -name TwoFa | grep $CONFIG | grep -v dSYM)"
+EXECUTABLE="$(find .build -name TwoFa | grep $CONFIG | grep -v dSYM | grep macosx)"
 
 BUILDOUT="$(swift build \
 -c $CONFIG \

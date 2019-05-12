@@ -28,6 +28,7 @@
 - [Installation](#installation)
 - [Building from Source](#building-from-source)
   - [Before Building](#before-building)
+    - [Linux Dependencies](#linux-dependencies)
   - [swift build](#swift-build)
   - [Xcode](#xcode)
 - [Testing](#testing)
@@ -198,6 +199,9 @@ Before you build, you must:
     $ apt-get install openssl libssl-dev
 
 ### swift build
+
+**NOTE**: *Package.resolved* is kept in .gitignore because it gets regenerated when switching Platforms (removing
+Mac/Linux specific packages, and adding Linux/Mac specific packages, and vice versa)
 
 If you want to build using `swift build`, you can use the script `build.sh`. It will:
 

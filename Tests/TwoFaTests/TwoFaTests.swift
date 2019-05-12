@@ -3,8 +3,12 @@ import class Foundation.Bundle
 
 final class TwoFaTests: XCTestCase {
     func testNoArguments() throws {
-        // Some of the APIs that we use below are available in macOS 10.13 and above.
+        #if os(Linux)
+        print("Skipping on Linux")
+        return
+        #endif
         guard #available(macOS 10.13, *) else {
+            print("Skipping on and macOS < 10.13")
             return
         }
 

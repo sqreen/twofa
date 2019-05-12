@@ -19,6 +19,15 @@ class ApplicationHost: ApplicationHostProtocol {
     }
     
     func run(_ callback: @escaping AppCallback) {
+        signal(SIGINT) { signal in
+            if GLOBAL_SHOULD_QUIT {
+                print("Exiting because previous SIGINT not honored...")
+                exit(130)
+            } else {
+                GLOBAL_SHOULD_QUIT = true
+            }
+        }
+        
         callback()
     }
 }

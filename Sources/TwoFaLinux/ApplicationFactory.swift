@@ -13,9 +13,9 @@ public class ApplicationFactory {
         
     }
     
-    public func create() -> Application {
+    public func create() throws -> Application {
         let host = ApplicationHost()
         let source = NotImplementedOtpAuthSource()
-        return Application(appHost: host, keychain: DummyKeychain(), source: source, outputs: [StdoutOutputChannel()])
+        return Application(appHost: host, keychain: try PythonKeyring(), source: source, outputs: [StdoutOutputChannel()])
     }
 }

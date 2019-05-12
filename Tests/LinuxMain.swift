@@ -1,7 +1,11 @@
 import XCTest
 
-import twofaTests
+import TwoFaTests
+import TwoFaCoreTests
+import TwoFaLinuxTests
 
 var tests = [XCTestCaseEntry]()
-tests += twofaTests.allTests()
+tests += TwoFaTests.allTests()
+tests += TwoFaCoreTests.allTests()
+tests += TwoFaLinuxTests.allTests()
 XCTMain(tests)

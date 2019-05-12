@@ -18,4 +18,5 @@ public protocol Keychain {
 public enum KeychainError : Error {
     case duplicateItem
     case itemNotFound
+    case invalidData(_ msg: String)
 }
