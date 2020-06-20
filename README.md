@@ -6,7 +6,7 @@
 
 <p align="center">
   <small>Licenced under an MIT licence.</small> | Maintainer: <a href="mailto:janis@sqreen.com">Jānis Kiršteins &lt;janis@sqreen.com&gt;</a> (<a href="https://twitter.com/jkirsteins">@jkirsteins</a>)</p>
-  
+
 <p align="center">Copyright &copy; 2019 Sqreen</p>
 
 ![Screenshot of twofa asking for authentication](img/get.png)
@@ -47,7 +47,7 @@ This constraint will require the user's password or TouchID to access the data.
 While commonly 2FA (2-factor authentication) is used via a smartphone app, for heavy use a computer-based code generation can be more efficient. While there are some existing TOTP (time-based one time password) generating applications for computers, they have one or more drawbacks:
 
 - they require you to enter a password every time you want to use it
-- no command line interface 
+- no command line interface
 
 > **Sidenote**: there probably exist some authenticator apps that store the secrets in plaintext on the filesystem, and do not have the first problem. However, if such a tool existed, it would be far too insecure to use in a serious capacity
 
@@ -60,11 +60,7 @@ It seems that there are no good solutions available currently that mitigate thes
 
 ### Supported macOS Versions
 
-Since Swift 5 does not support static linking of the Swift runtime anymore, then binaries built with Swift 5 should work without additional steps on Mojave 10.14.4 and later.
-
-The versions released on Homebrew will be built using Swift 4 and should run on all Mojave versions.
-
-Earlier macOS versions will not be tested.
+Built and tested on macOS Catalina 10.15.5.
 
 ### Info.plist
 
@@ -192,7 +188,7 @@ Before you build, you must:
 
 - edit `Supporting/Info.plist` (optional)
 - edit `Supporting/twofa.entitlements` (**important**)
-- edit `build.sh` and `regen.sh` and replace the code sign identity string with the value corresponding to your Apple-issued key that you will use to codesign
+- edit `build_mac.sh` and replace the code sign identity string with the value corresponding to your Apple-issued key that you will use to codesign
 
 #### Linux Dependencies
 
