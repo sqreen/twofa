@@ -4,3 +4,4 @@
 /*.xcodeproj
 .vscode
 Package.resolved
+.swiftpm
