@@ -15,8 +15,11 @@ echo "    built: $EXECUTABLE"
 
 echo "==> Codesigning"
 echo "    identity: $ID"
-codesign --entitlements "Supporting/twofa.entitlements" -s "$ID" "$EXECUTABLE"
+codesign -vvv --entitlements "Supporting/twofa.entitlements" -s "$ID" "$EXECUTABLE"
 echo "    done"
+
+echo "==> Verifying"
+spctl --assess --type execute --context context:primary-signature -v "$EXECUTABLE"
 
 echo "==> Renaming output"
 echo "    $EXECUTABLE -> ${EXECUTABLE%TwoFa}twofa"
