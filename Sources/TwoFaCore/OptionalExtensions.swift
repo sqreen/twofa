@@ -31,8 +31,3 @@ extension Optional where Wrapped : CustomStringConvertible {
     }
 }
 
-#if swift(>=4.1)
-extension Array : ArgumentConvertible where Element : ArgumentConvertible {}
-extension Optional : ArgumentConvertible where Wrapped : ArgumentConvertible {}
-extension Optional : CustomStringConvertible where Wrapped : CustomStringConvertible {}
-#endif
