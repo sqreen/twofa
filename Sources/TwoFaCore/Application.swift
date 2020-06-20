@@ -32,7 +32,6 @@ public class Application {
             }
 
             $0.command("version") {
-                let bundleID = Bundle.main
                 let appVersion = Bundle.main.infoDictionary!["CFBundleShortVersionString"] as? String ?? "unknown"
                 print("Version: \(appVersion)")
             }
