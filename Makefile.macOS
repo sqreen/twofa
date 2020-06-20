@@ -4,7 +4,6 @@ all: twofa
 .PHONY: twofa
 twofa:
 	./build_mac.sh
-	mv ./.build/x86_64-apple-macosx10.10/release/{TwoFaMac,twofa}
 
 # This rule tells make to delete hello and hello.o
 .PHONY: clean
